@@ -1,0 +1,121 @@
+<UserControl x:Class="MedML.View.DashboardView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1200">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Text="Статистика и визуализация данных" 
+                   FontSize="24" 
+                   Margin="20,10"
+                   HorizontalAlignment="Center"/>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Возраст и болезнь -->
+            <Border Grid.Column="0" Margin="10" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Возраст и болезнь сердца" 
+                               FontSize="16" 
+                               Margin="10,5"
+                               HorizontalAlignment="Center"/>
+                    <lvc:CartesianChart Grid.Row="1" 
+                                       x:Name="AgeChart"
+                                       Margin="10"/>
+                </Grid>
+            </Border>
+
+            <!-- Пол и частота болезни -->
+            <Border Grid.Column="1" Margin="10" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Распределение по полу" 
+                               FontSize="16" 
+                               Margin="10,5"
+                               HorizontalAlignment="Center"/>
+                    <lvc:PieChart Grid.Row="1" 
+                                 x:Name="SexChart"
+                                 Margin="10"/>
+                </Grid>
+            </Border>
+
+            <!-- Тип боли в груди -->
+            <Border Grid.Column="2" Margin="10" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Тип боли в груди" 
+                               FontSize="16" 
+                               Margin="10,5"
+                               HorizontalAlignment="Center"/>
+                    <lvc:CartesianChart Grid.Row="1" 
+                                       x:Name="ChestPainChart"
+                                       Margin="10"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Холестерин -->
+            <Border Grid.Column="0" Margin="10" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Холестерин и болезнь сердца" 
+                               FontSize="16" 
+                               Margin="10,5"
+                               HorizontalAlignment="Center"/>
+                    <lvc:CartesianChart Grid.Row="1" 
+                                       x:Name="CholesterolChart"
+                                       Margin="10"/>
+                </Grid>
+            </Border>
+
+            <!-- Вероятность -->
+            <Border Grid.Column="1" Margin="10" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Предсказанная вероятность" 
+                               FontSize="16" 
+                               Margin="10,5"
+                               HorizontalAlignment="Center"/>
+                    <lvc:PieChart Grid.Row="1" 
+                                 x:Name="ProbabilityChart"
+                                 Margin="10,30,10,10"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl> 

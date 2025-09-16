@@ -1,0 +1,165 @@
+<UserControl x:Class="MedML.View.ForecastView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1000">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <TextBlock Text="Прогноз вероятности сердечного заболевания" 
+                   FontSize="24" 
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,20"/>
+
+        <!-- Основная форма -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Левая панель с вводом данных -->
+            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                <GroupBox Header="Персональные данные" Margin="0,0,0,10">
+                    <StackPanel Margin="10">
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Возраст:" Width="150"/>
+                            <TextBox x:Name="AgeTextBox" Width="150" HorizontalAlignment="Left"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Пол:" Width="150"/>
+                            <ComboBox x:Name="SexComboBox" Width="150" HorizontalAlignment="Left">
+                                <ComboBoxItem Content="Мужской"/>
+                                <ComboBoxItem Content="Женский"/>
+                            </ComboBox>
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Симптомы" Margin="0,0,0,10">
+                    <StackPanel Margin="10">
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Тип боли в груди:" Width="150"/>
+                            <ComboBox x:Name="ChestPainComboBox" Width="150" HorizontalAlignment="Left">
+                                <ComboBoxItem Content="Типичная стенокардия"/>
+                                <ComboBoxItem Content="Нетипичная стенокардия"/>
+                                <ComboBoxItem Content="Асимптоматическая"/>
+                                <ComboBoxItem Content="Нестенокардическая боль"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Давление в покое:" Width="150"/>
+                            <TextBox x:Name="RestingBPTextBox" Width="150" HorizontalAlignment="Left"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Холестерин:" Width="150"/>
+                            <TextBox x:Name="CholesterolTextBox" Width="150" HorizontalAlignment="Left"/>
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Header="Медицинские показатели" Margin="0,0,0,10">
+                    <StackPanel Margin="10">
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Уровень сахара:" Width="150"/>
+                            <ComboBox x:Name="FastingBSComboBox" Width="150" HorizontalAlignment="Left">
+                                <ComboBoxItem Content="≤ 120 мг/дл"/>
+                                <ComboBoxItem Content="> 120 мг/дл"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="ЭКГ в покое:" Width="150"/>
+                            <ComboBox x:Name="RestingECGComboBox" Width="150" HorizontalAlignment="Left">
+                                <ComboBoxItem Content="Нормальная"/>
+                                <ComboBoxItem Content="Отклонение ST-T"/>
+                                <ComboBoxItem Content="Гипертрофия ЛЖ"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Макс. пульс:" Width="150"/>
+                            <TextBox x:Name="MaxHRTextBox" Width="150" HorizontalAlignment="Left"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Стенокардия:" Width="150"/>
+                            <ComboBox x:Name="ExerciseAnginaComboBox" Width="150" HorizontalAlignment="Left">
+                                <ComboBoxItem Content="Нет"/>
+                                <ComboBoxItem Content="Да"/>
+                            </ComboBox>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Депрессия ST:" Width="150"/>
+                            <TextBox x:Name="OldpeakTextBox" Width="150" HorizontalAlignment="Left"/>
+                        </DockPanel>
+                        <DockPanel Margin="0,5">
+                            <TextBlock Text="Наклон ST:" Width="150"/>
+                            <ComboBox x:Name="STSlopeComboBox" Width="150" HorizontalAlignment="Left">
+                                <ComboBoxItem Content="Восходящий"/>
+                                <ComboBoxItem Content="Плоский"/>
+                                <ComboBoxItem Content="Нисходящий"/>
+                            </ComboBox>
+                        </DockPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+
+            <!-- Правая панель с результатом -->
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Индикатор вероятности -->
+                <Border Background="#F5F5F5" CornerRadius="10" Margin="0,0,0,20">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Text="Вероятность заболевания" 
+                                 FontSize="20" 
+                                 HorizontalAlignment="Center"
+                                 Margin="0,20,0,0"/>
+                        
+                        <lvc:PieChart x:Name="ProbabilityChart" 
+                                    Grid.Row="1"
+                                    Margin="20"/>
+                    </Grid>
+                </Border>
+
+                <!-- Дополнительная информация -->
+                <TextBlock Grid.Row="1" 
+                          x:Name="AdditionalInfoTextBlock"
+                          TextWrapping="Wrap"
+                          Margin="10"/>
+            </Grid>
+        </Grid>
+
+        <!-- Нижняя панель с кнопками -->
+        <StackPanel Grid.Row="2" 
+                    Orientation="Horizontal" 
+                    HorizontalAlignment="Center"
+                    Margin="0,20,0,0">
+            <Button Content="Сгенерировать тестовые данные" 
+                    x:Name="GenerateTestDataButton"
+                    Click="GenerateTestDataButton_Click"
+                    Padding="15,5"
+                    Margin="0,0,20,0"/>
+            <Button Content="Рассчитать вероятность" 
+                    x:Name="CalculateProbabilityButton"
+                    Click="CalculateProbabilityButton_Click"
+                    Padding="15,5"
+                    Background="#2196F3"
+                    Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</UserControl> 
