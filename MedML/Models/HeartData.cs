@@ -2,6 +2,7 @@ namespace MedML.Models
 {
     public class HeartData
     {
+        public int Id { get; set; }
         public string Age { get; set; }
         public string Sex { get; set; }
         public string ChestPainType { get; set; }

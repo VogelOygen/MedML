@@ -5,6 +5,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style x:Key="ToggleSwitchStyle" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Background" Value="#E0E0E0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Grid Width="46" Height="24">
+                                <Border x:Name="Track" 
+                                        Background="{TemplateBinding Background}" 
+                                        CornerRadius="12" 
+                                        BorderBrush="#BDBDBD"
+                                        BorderThickness="1"/>
+                                <Ellipse x:Name="Thumb" 
+                                         Width="20" Height="20" 
+                                         Fill="White" 
+                                         HorizontalAlignment="Left" 
+                                         Margin="2">
+                                    <Ellipse.Effect>
+                                        <DropShadowEffect ShadowDepth="1" BlurRadius="3" Opacity="0.3"/>
+                                    </Ellipse.Effect>
+                                </Ellipse>
+                            </Grid>
+                            <ContentPresenter Margin="10,0,0,0" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Track" Property="Background" Value="#2196F3"/>
+                                <Setter TargetName="Track" Property="BorderBrush" Value="#2196F3"/>
+                                <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Track" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -12,13 +55,32 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
-            <TextBlock Text="Данные из CSV файла" 
+            <TextBlock Text="Просмотр данных" 
                        FontSize="24" 
                        VerticalAlignment="Center"
                        Margin="0,0,20,0"/>
-            <Button Content="Обновить CSV" 
+            <Button Content="Обновить" 
                     Padding="10,5"
                     Click="RefreshButton_Click"/>
+            <CheckBox x:Name="DbSourceCheckBox" 
+                      Content="Режим базы данных" 
+                      Style="{StaticResource ToggleSwitchStyle}"
+                      VerticalAlignment="Center" 
+                      Margin="20,0,0,0"
+                      Checked="OnDataSourceChanged"
+                      Unchecked="OnDataSourceChanged"/>
+            <Button x:Name="ExportButton"
+                    Content="Экспорт в CSV" 
+                    Padding="10,5"
+                    Margin="20,0,0,0"
+                    Visibility="Collapsed"
+                    Click="ExportButton_Click"/>
+            
+            <StackPanel x:Name="CrudButtons" Orientation="Horizontal" Visibility="Collapsed">
+                <Button Content="Добавить" Padding="10,5" Margin="20,0,0,0" Click="AddButton_Click"/>
+                <Button Content="Редактировать" Padding="10,5" Margin="10,0,0,0" Click="EditButton_Click"/>
+                <Button Content="Удалить" Padding="10,5" Margin="10,0,0,0" Click="DeleteButton_Click"/>
+            </StackPanel>
         </StackPanel>
 
         <DataGrid Grid.Row="1" 

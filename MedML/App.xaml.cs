@@ -1,6 +1,7 @@
-﻿using System.Configuration;
+using System.Configuration;
 using System.Data;
 using System.Windows;
+using MedML.Data;
 
 namespace MedML
 {
@@ -9,6 +10,15 @@ namespace MedML
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            using (var context = new AppDbContext())
+            {
+                DbInitializer.Initialize(context);
+            }
+        }
     }
 
 }
