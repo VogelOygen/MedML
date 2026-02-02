@@ -251,7 +251,7 @@ namespace MedML.View
                 DataLabelsSize = 20,
                 DataLabelsPaint = new SolidColorPaint(SKColors.Black),
                 DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle,
-                DataLabelsFormatter = point => $"{point.PrimaryValue:N1}%"
+                DataLabelsFormatter = point => $"{point.Coordinate.PrimaryValue:N1}%"
             };
 
             var stats = new LabelVisual

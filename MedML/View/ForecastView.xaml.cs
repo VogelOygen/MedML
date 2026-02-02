@@ -86,16 +86,16 @@ namespace MedML.View
                 var data = new HeartData
                 {
                     Age = AgeTextBox.Text,
-                    Sex = ((ComboBoxItem)SexComboBox.SelectedItem).Content.ToString() == "Мужской" ? "M" : "F",
-                    ChestPainType = GetChestPainTypeCode(((ComboBoxItem)ChestPainComboBox.SelectedItem).Content.ToString()),
+                    Sex = (SexComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Мужской" ? "M" : "F",
+                    ChestPainType = GetChestPainTypeCode((ChestPainComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? ""),
                     RestingBP = RestingBPTextBox.Text,
                     Cholesterol = CholesterolTextBox.Text,
-                    FastingBS = ((ComboBoxItem)FastingBSComboBox.SelectedItem).Content.ToString().StartsWith(">") ? "1" : "0",
-                    RestingECG = GetRestingECGCode(((ComboBoxItem)RestingECGComboBox.SelectedItem).Content.ToString()),
+                    FastingBS = (FastingBSComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString()?.StartsWith(">") == true ? "1" : "0",
+                    RestingECG = GetRestingECGCode((RestingECGComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? ""),
                     MaxHR = MaxHRTextBox.Text,
-                    ExerciseAngina = ((ComboBoxItem)ExerciseAnginaComboBox.SelectedItem).Content.ToString() == "Да" ? "Y" : "N",
+                    ExerciseAngina = (ExerciseAnginaComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() == "Да" ? "Y" : "N",
                     Oldpeak = OldpeakTextBox.Text,
-                    ST_Slope = GetSTSlopeCode(((ComboBoxItem)STSlopeComboBox.SelectedItem).Content.ToString())
+                    ST_Slope = GetSTSlopeCode((STSlopeComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "")
                 };
 
                 // TODO: Здесь будет вызов ML модели
@@ -189,7 +189,7 @@ namespace MedML.View
                 DataLabelsSize = 20,
                 DataLabelsPaint = new SolidColorPaint(SKColors.Black),
                 DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle,
-                DataLabelsFormatter = point => $"{point.PrimaryValue:N1}%"
+                DataLabelsFormatter = point => $"{point.Coordinate.PrimaryValue:N1}%"
             };
 
             ProbabilityChart.Series = new ISeries[] { series };

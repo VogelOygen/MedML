@@ -17,7 +17,7 @@ namespace MedML.ViewModel
     public class EdaViewModel : INotifyPropertyChanged
     {
         private const string CSV_PATH = "Data/heart.csv";
-        private List<HeartData> _rawData;
+        private List<HeartData> _rawData = new List<HeartData>();
 
         // Filters
         public ObservableCollection<string> SexOptions { get; } = new ObservableCollection<string> { "Все", "M", "F" };
@@ -84,34 +84,34 @@ namespace MedML.ViewModel
         }
 
         // Chart 1: Scatter Plot (Age vs MaxHR)
-        private ISeries[] _scatterSeries;
+        private ISeries[] _scatterSeries = Array.Empty<ISeries>();
         public ISeries[] ScatterSeries 
         { 
             get => _scatterSeries; 
             set { _scatterSeries = value; OnPropertyChanged(); } 
         }
-        public Axis[] ScatterXAxes { get; set; }
-        public Axis[] ScatterYAxes { get; set; }
+        public Axis[] ScatterXAxes { get; set; } = Array.Empty<Axis>();
+        public Axis[] ScatterYAxes { get; set; } = Array.Empty<Axis>();
 
         // Chart 2: Cholesterol Distribution (Histogram-like)
-        private ISeries[] _cholesterolSeries;
+        private ISeries[] _cholesterolSeries = Array.Empty<ISeries>();
         public ISeries[] CholesterolSeries 
         { 
             get => _cholesterolSeries; 
             set { _cholesterolSeries = value; OnPropertyChanged(); } 
         }
-        public Axis[] CholesterolXAxes { get; set; }
-        public Axis[] CholesterolYAxes { get; set; }
+        public Axis[] CholesterolXAxes { get; set; } = Array.Empty<Axis>();
+        public Axis[] CholesterolYAxes { get; set; } = Array.Empty<Axis>();
 
         // Chart 3: RestingBP by ChestPainType (Column Chart)
-        private ISeries[] _bpByPainSeries;
+        private ISeries[] _bpByPainSeries = Array.Empty<ISeries>();
         public ISeries[] BpByPainSeries 
         { 
             get => _bpByPainSeries; 
             set { _bpByPainSeries = value; OnPropertyChanged(); } 
         }
-        public Axis[] BpByPainXAxes { get; set; }
-        public Axis[] BpByPainYAxes { get; set; }
+        public Axis[] BpByPainXAxes { get; set; } = Array.Empty<Axis>();
+        public Axis[] BpByPainYAxes { get; set; } = Array.Empty<Axis>();
 
         public EdaViewModel()
         {
@@ -282,7 +282,7 @@ namespace MedML.ViewModel
                 {
                     Name = "Холестерин",
                     Values = histogram.Select(h => h.Count).ToArray(),
-                    TooltipLabelFormatter = (point) => $"{histogram[point.Index].Bin}-{histogram[point.Index].Bin + binSize}: {point.PrimaryValue} чел."
+                    YToolTipLabelFormatter = (point) => $"{histogram[point.Index].Bin}-{histogram[point.Index].Bin + binSize}: {point.Coordinate.PrimaryValue} чел."
                 }
             };
 
@@ -329,8 +329,8 @@ namespace MedML.ViewModel
             }};
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

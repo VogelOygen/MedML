@@ -12,7 +12,7 @@ namespace MedML.View
     public partial class DataView : UserControl
     {
         private const string CSV_PATH = "Data/heart.csv";
-        private List<HeartData> _data;
+        private List<HeartData> _data = new List<HeartData>();
 
         private readonly Dictionary<string, string> _chestPainTypes = new Dictionary<string, string>
         {
