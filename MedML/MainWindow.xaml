@@ -18,6 +18,9 @@
             <TabItem Header="Прогноз">
                 <views:ForecastView/>
             </TabItem>
+            <TabItem Header="Обучение модели">
+                <views:LearnModelView/>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>
