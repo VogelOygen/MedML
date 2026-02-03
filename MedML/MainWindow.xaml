@@ -8,22 +8,23 @@
         mc:Ignorable="d"
         Title="MedML - Анализ сердечных заболеваний" Height="600" Width="1000">
     <Grid>
-        <TabControl>
-            <TabItem Header="Данные">
+        <TabControl x:Name="MainTabControl">
+            <TabItem x:Name="TabData" Header="Данные">
                 <views:DataView/>
             </TabItem>
-            <TabItem Header="Дашборд">
+            <TabItem x:Name="TabDashboard" Header="Дашборд">
                 <views:DashboardView/>
             </TabItem>
-            <TabItem Header="EDA Анализ">
+            <TabItem x:Name="TabEda" Header="EDA Анализ">
                 <views:EdaView/>
             </TabItem>
-            <TabItem Header="Прогноз">
+            <TabItem x:Name="TabForecast" Header="Прогноз">
                 <views:ForecastView/>
             </TabItem>
-            <TabItem Header="Обучение модели">
+            <TabItem x:Name="TabLearn" Header="Обучение модели">
                 <views:LearnModelView/>
             </TabItem>
+            <TabItem x:Name="TabUsers" Header="Пользователи" Visibility="Collapsed"/>
         </TabControl>
     </Grid>
 </Window>

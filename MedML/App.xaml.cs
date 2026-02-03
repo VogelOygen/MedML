@@ -18,6 +18,23 @@ namespace MedML
             {
                 DbInitializer.Initialize(context);
             }
+            this.DispatcherUnhandledException += (s, exArgs) =>
+            {
+                MessageBox.Show($"Необработанная ошибка: {exArgs.Exception.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                exArgs.Handled = true;
+            };
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            var login = new View.LoginWindow();
+            var result = login.ShowDialog();
+            if (result != true || Session.CurrentUser == null)
+            {
+                Shutdown();
+                return;
+            }
+            var main = new MainWindow();
+            Current.MainWindow = main;
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
+            main.Show();
         }
     }
 

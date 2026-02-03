@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using MedML.Models;
+using MedML.Security;
 
 namespace MedML.Data
 {
@@ -12,11 +13,31 @@ namespace MedML.Data
         {
             context.Database.Migrate();
 
+            if (!context.Users.Any())
+            {
+                var admin = new User
+                {
+                    Username = "admin",
+                    PasswordHash = PasswordHelper.Hash("admin"),
+                    Role = "Admin",
+                    IsActive = true
+                };
+                var client = new User
+                {
+                    Username = "client",
+                    PasswordHash = PasswordHelper.Hash("client"),
+                    Role = "Client",
+                    IsActive = true
+                };
+                context.Users.Add(admin);
+                context.Users.Add(client);
+                context.SaveChanges();
+            }
+
             if (context.HeartDiseaseRecords.Any())
             {
                 return;   // DB has been seeded
             }
-
             var csvPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "heart.csv");
             if (!File.Exists(csvPath))
             {
