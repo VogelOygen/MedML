@@ -20,6 +20,7 @@ namespace MedML
         {
             InitializeComponent();
             ApplyRoleVisibility();
+            UpdateUserHeader();
         }
 
         private void ApplyRoleVisibility()
@@ -45,6 +46,31 @@ namespace MedML
                 TabUsers.Visibility = Visibility.Collapsed;
                 TabUsers.Content = null;
                 MainTabControl.SelectedItem = TabForecast;
+            }
+        }
+
+        private void UpdateUserHeader()
+        {
+            var name = Session.CurrentUser?.Username ?? "";
+            if (UsernameLabel != null)
+            {
+                UsernameLabel.Text = string.IsNullOrEmpty(name) ? "" : $"Пользователь: {name}";
+            }
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            Session.CurrentUser = null;
+            var login = new View.LoginWindow();
+            var result = login.ShowDialog();
+            if (result == true && Session.CurrentUser != null)
+            {
+                ApplyRoleVisibility();
+                UpdateUserHeader();
+            }
+            else
+            {
+                Application.Current.Shutdown();
             }
         }
     }

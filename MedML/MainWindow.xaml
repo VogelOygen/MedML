@@ -8,7 +8,15 @@
         mc:Ignorable="d"
         Title="MedML - Анализ сердечных заболеваний" Height="600" Width="1000">
     <Grid>
-        <TabControl x:Name="MainTabControl">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" Margin="10">
+            <TextBlock x:Name="UsernameLabel" Text="" VerticalAlignment="Center"/>
+            <Button Content="Выход" Padding="10,5" HorizontalAlignment="Right" DockPanel.Dock="Right" Click="LogoutButton_Click"/>
+        </DockPanel>
+        <TabControl x:Name="MainTabControl" Grid.Row="1">
             <TabItem x:Name="TabData" Header="Данные">
                 <views:DataView/>
             </TabItem>
