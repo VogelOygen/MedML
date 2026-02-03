@@ -51,7 +51,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10">
@@ -83,7 +85,36 @@
             </StackPanel>
         </StackPanel>
 
-        <DataGrid Grid.Row="1" 
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10">
+            <TextBlock Text="Фильтры:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="Возраст" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox x:Name="AgeMinTextBox" Width="60" Margin="0,0,5,0" PreviewTextInput="IntegerTextBox_PreviewTextInput"/>
+            <TextBlock Text="-" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBox x:Name="AgeMaxTextBox" Width="60" Margin="0,0,10,0" PreviewTextInput="IntegerTextBox_PreviewTextInput"/>
+            <TextBlock Text="Пол" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox x:Name="SexFilterComboBox" Width="90" Margin="0,0,10,0">
+                <ComboBoxItem Content="Все"/>
+                <ComboBoxItem Content="M"/>
+                <ComboBoxItem Content="F"/>
+            </ComboBox>
+            <TextBlock Text="Боль в груди" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox x:Name="ChestPainFilterComboBox" Width="120" Margin="0,0,10,0">
+                <ComboBoxItem Content="Все"/>
+                <ComboBoxItem Content="ATA"/>
+                <ComboBoxItem Content="NAP"/>
+                <ComboBoxItem Content="ASY"/>
+                <ComboBoxItem Content="TA"/>
+            </ComboBox>
+            <TextBlock Text="Заболевание" VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <ComboBox x:Name="HeartDiseaseFilterComboBox" Width="110" Margin="0,0,10,0">
+                <ComboBoxItem Content="Все"/>
+                <ComboBoxItem Content="Нет"/>
+                <ComboBoxItem Content="Есть"/>
+            </ComboBox>
+            <Button Content="Применить" Padding="10,5" Click="ApplyFilterButton_Click"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2" 
                   x:Name="DataGrid"
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
@@ -121,5 +152,19 @@
                 </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10" HorizontalAlignment="Right">
+            <TextBlock Text="Стр." VerticalAlignment="Center" Margin="0,0,5,0"/>
+            <TextBlock x:Name="PageInfoTextBlock" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="На странице" VerticalAlignment="Center" Margin="10,0,5,0"/>
+            <ComboBox x:Name="PageSizeComboBox" Width="70" SelectionChanged="PageSizeComboBox_SelectionChanged">
+                <ComboBoxItem Content="25"/>
+                <ComboBoxItem Content="50"/>
+                <ComboBoxItem Content="100"/>
+                <ComboBoxItem Content="200"/>
+            </ComboBox>
+            <Button Content="Назад" Padding="10,5" Margin="10,0,0,0" Click="PrevPageButton_Click"/>
+            <Button Content="Вперёд" Padding="10,5" Margin="5,0,0,0" Click="NextPageButton_Click"/>
+        </StackPanel>
     </Grid>
 </UserControl> 

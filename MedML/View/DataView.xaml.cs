@@ -9,6 +9,7 @@ using Microsoft.Win32;
 using MedML.Models;
 using MedML.Data;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MedML.View
 {
@@ -17,6 +18,10 @@ namespace MedML.View
         private const string CSV_PATH = "Data/heart.csv";
         private List<HeartData> _data = new List<HeartData>();
         private List<HeartDiseaseRecord> _rawRecords = new List<HeartDiseaseRecord>();
+        private List<HeartDiseaseRecord> _allCsvRecords = new List<HeartDiseaseRecord>();
+        private int _currentPage = 1;
+        private int _pageSize = 50;
+        private int _totalCount = 0;
 
         private readonly Dictionary<string, string> _chestPainTypes = new Dictionary<string, string>
         {
@@ -43,6 +48,7 @@ namespace MedML.View
         public DataView()
         {
             InitializeComponent();
+            if (PageSizeComboBox != null) PageSizeComboBox.SelectedIndex = 1;
             LoadData();
         }
 
@@ -68,9 +74,35 @@ namespace MedML.View
             {
                 using (var context = new AppDbContext())
                 {
-                    _rawRecords = context.HeartDiseaseRecords.OrderBy(r => r.Id).ToList();
+                    var query = context.HeartDiseaseRecords.AsQueryable();
+
+                    if (TryParseInt(AgeMinTextBox?.Text, out var ageMin)) query = query.Where(r => r.Age >= ageMin);
+                    if (TryParseInt(AgeMaxTextBox?.Text, out var ageMax)) query = query.Where(r => r.Age <= ageMax);
+
+                    var sex = (SexFilterComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                    if (!string.IsNullOrEmpty(sex) && sex != "Все") query = query.Where(r => r.Sex == sex);
+
+                    var cpt = (ChestPainFilterComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                    if (!string.IsNullOrEmpty(cpt) && cpt != "Все") query = query.Where(r => r.ChestPainType == cpt);
+
+                    var hd = (HeartDiseaseFilterComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                    if (!string.IsNullOrEmpty(hd) && hd != "Все")
+                    {
+                        var hdVal = hd == "Есть" ? 1 : 0;
+                        query = query.Where(r => r.HeartDisease == hdVal);
+                    }
+
+                    _totalCount = query.Count();
+                    var totalPages = Math.Max(1, (int)Math.Ceiling(_totalCount / (double)_pageSize));
+                    if (_currentPage > totalPages) _currentPage = totalPages;
+
+                    _rawRecords = query.OrderBy(r => r.Id)
+                                       .Skip((_currentPage - 1) * _pageSize)
+                                       .Take(_pageSize)
+                                       .ToList();
+
                     UpdateViewFromRawRecords();
-                    Debug.WriteLine($"Загружено записей из БД: {_data.Count}");
+                    UpdatePageInfo(totalPages);
                 }
             }
             catch (Exception ex)
@@ -112,7 +144,7 @@ namespace MedML.View
                     return;
                 }
 
-                _rawRecords = new List<HeartDiseaseRecord>();
+                _allCsvRecords = new List<HeartDiseaseRecord>();
 
                 // Пропускаем заголовок
                 for (int i = 1; i < lines.Length; i++)
@@ -128,7 +160,6 @@ namespace MedML.View
                     {
                         var record = new HeartDiseaseRecord
                         {
-                            // Id is not set for CSV records, will be default (0)
                             Age = int.Parse(values[0]),
                             Sex = values[1],
                             ChestPainType = values[2],
@@ -142,7 +173,7 @@ namespace MedML.View
                             ST_Slope = values[10],
                             HeartDisease = int.Parse(values[11])
                         };
-                        _rawRecords.Add(record);
+                        _allCsvRecords.Add(record);
                     }
                     catch (Exception ex)
                     {
@@ -150,8 +181,7 @@ namespace MedML.View
                     }
                 }
 
-                UpdateViewFromRawRecords();
-                Debug.WriteLine($"Загружено записей: {_data.Count}");
+                ApplyFiltersAndPaginateCsv();
             }
             catch (Exception ex)
             {
@@ -161,6 +191,31 @@ namespace MedML.View
             }
         }
 
+        private void ApplyFiltersAndPaginateCsv()
+        {
+            IEnumerable<HeartDiseaseRecord> query = _allCsvRecords;
+            if (TryParseInt(AgeMinTextBox?.Text, out var ageMin)) query = query.Where(r => r.Age >= ageMin);
+            if (TryParseInt(AgeMaxTextBox?.Text, out var ageMax)) query = query.Where(r => r.Age <= ageMax);
+            var sex = (SexFilterComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            if (!string.IsNullOrEmpty(sex) && sex != "Все") query = query.Where(r => r.Sex == sex);
+            var cpt = (ChestPainFilterComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            if (!string.IsNullOrEmpty(cpt) && cpt != "Все") query = query.Where(r => r.ChestPainType == cpt);
+            var hd = (HeartDiseaseFilterComboBox?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            if (!string.IsNullOrEmpty(hd) && hd != "Все")
+            {
+                var hdVal = hd == "Есть" ? 1 : 0;
+                query = query.Where(r => r.HeartDisease == hdVal);
+            }
+            _totalCount = query.Count();
+            var totalPages = Math.Max(1, (int)Math.Ceiling(_totalCount / (double)_pageSize));
+            if (_currentPage > totalPages) _currentPage = totalPages;
+            _rawRecords = query.OrderBy(r => r.Age)
+                               .Skip((_currentPage - 1) * _pageSize)
+                               .Take(_pageSize)
+                               .ToList();
+            UpdateViewFromRawRecords();
+            UpdatePageInfo(totalPages);
+        }
         private void UpdateViewFromRawRecords()
         {
             _data = _rawRecords.Select(r => new HeartData
@@ -191,6 +246,7 @@ namespace MedML.View
 
         private void OnDataSourceChanged(object sender, RoutedEventArgs e)
         {
+            _currentPage = 1;
             LoadData();
         }
 
@@ -232,6 +288,60 @@ namespace MedML.View
             }
         }
 
+        private void ApplyFilterButton_Click(object sender, RoutedEventArgs e)
+        {
+            _currentPage = 1;
+            LoadData();
+        }
+
+        private void PrevPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_currentPage > 1)
+            {
+                _currentPage--;
+                LoadData();
+            }
+        }
+
+        private void NextPageButton_Click(object sender, RoutedEventArgs e)
+        {
+            var totalPages = Math.Max(1, (int)Math.Ceiling(_totalCount / (double)_pageSize));
+            if (_currentPage < totalPages)
+            {
+                _currentPage++;
+                LoadData();
+            }
+        }
+
+        private void PageSizeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var item = PageSizeComboBox?.SelectedItem as ComboBoxItem;
+            if (item != null && int.TryParse(item.Content.ToString(), out var size))
+            {
+                _pageSize = size;
+                _currentPage = 1;
+                LoadData();
+            }
+        }
+
+        private void UpdatePageInfo(int totalPages)
+        {
+            if (PageInfoTextBlock != null)
+            {
+                PageInfoTextBlock.Text = $"{_currentPage} из {totalPages} (всего {_totalCount})";
+            }
+        }
+
+        private bool TryParseInt(string s, out int value)
+        {
+            return int.TryParse(s, out value);
+        }
+
+        private void IntegerTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
+        }
+
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             var editor = new RecordEditorWindow();
@@ -244,6 +354,7 @@ namespace MedML.View
                         context.HeartDiseaseRecords.Add(editor.Record);
                         context.SaveChanges();
                     }
+                    _currentPage = 1;
                     LoadDbData();
                 }
                 catch (Exception ex)
