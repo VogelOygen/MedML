@@ -12,7 +12,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <StackPanel Grid.Row="0">
                 <TextBlock Text="Возраст:" Margin="0,5,0,0"/>
-                <TextBox x:Name="AgeTextBox" Margin="0,0,0,5"/>
+                <TextBox x:Name="AgeTextBox" Margin="0,0,0,5" PreviewTextInput="IntegerTextBox_PreviewTextInput" ToolTip="Допустимо: 18–100"/>
 
                 <TextBlock Text="Пол:" Margin="0,5,0,0"/>
                 <ComboBox x:Name="SexComboBox" Margin="0,0,0,5">
@@ -29,10 +29,10 @@
                 </ComboBox>
 
                 <TextBlock Text="Давление в покое (RestingBP):" Margin="0,5,0,0"/>
-                <TextBox x:Name="RestingBPTextBox" Margin="0,0,0,5"/>
+                <TextBox x:Name="RestingBPTextBox" Margin="0,0,0,5" PreviewTextInput="IntegerTextBox_PreviewTextInput" ToolTip="Допустимо: 60–200"/>
 
                 <TextBlock Text="Холестерин (Cholesterol):" Margin="0,5,0,0"/>
-                <TextBox x:Name="CholesterolTextBox" Margin="0,0,0,5"/>
+                <TextBox x:Name="CholesterolTextBox" Margin="0,0,0,5" PreviewTextInput="IntegerTextBox_PreviewTextInput" ToolTip="Допустимо: 100–600"/>
 
                 <TextBlock Text="Сахар в крови (FastingBS):" Margin="0,5,0,0"/>
                 <ComboBox x:Name="FastingBSComboBox" Margin="0,0,0,5">
@@ -48,7 +48,7 @@
                 </ComboBox>
 
                 <TextBlock Text="Макс. пульс (MaxHR):" Margin="0,5,0,0"/>
-                <TextBox x:Name="MaxHRTextBox" Margin="0,0,0,5"/>
+                <TextBox x:Name="MaxHRTextBox" Margin="0,0,0,5" PreviewTextInput="IntegerTextBox_PreviewTextInput" ToolTip="Допустимо: 60–220"/>
 
                 <TextBlock Text="Стенокардия (ExerciseAngina):" Margin="0,5,0,0"/>
                 <ComboBox x:Name="ExerciseAnginaComboBox" Margin="0,0,0,5">
@@ -57,7 +57,7 @@
                 </ComboBox>
 
                 <TextBlock Text="Депрессия ST (Oldpeak):" Margin="0,5,0,0"/>
-                <TextBox x:Name="OldpeakTextBox" Margin="0,0,0,5"/>
+                <TextBox x:Name="OldpeakTextBox" Margin="0,0,0,5" PreviewTextInput="FloatTextBox_PreviewTextInput" ToolTip="Допустимо: 0.0–10.0"/>
 
                 <TextBlock Text="Наклон ST (ST_Slope):" Margin="0,5,0,0"/>
                 <ComboBox x:Name="STSlopeComboBox" Margin="0,0,0,5">

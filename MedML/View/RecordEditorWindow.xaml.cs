@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Text.RegularExpressions;
 using MedML.Models;
 
 namespace MedML.View
@@ -41,6 +42,26 @@ namespace MedML.View
             }
         }
 
+        private void IntegerTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
+        }
+
+        private void FloatTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            var tb = sender as TextBox;
+            string incoming = e.Text;
+            if (!Regex.IsMatch(incoming, "^[0-9.]+$"))
+            {
+                e.Handled = true;
+                return;
+            }
+            if (incoming.Contains(".") && tb != null && tb.Text.Contains("."))
+            {
+                e.Handled = true;
+            }
+        }
+
         private void PopulateFields()
         {
             AgeTextBox.Text = Record.Age.ToString();
@@ -73,23 +94,50 @@ namespace MedML.View
         {
             try
             {
-                if (!int.TryParse(AgeTextBox.Text, out int age)) throw new Exception("Некорректный возраст");
-                if (!int.TryParse(RestingBPTextBox.Text, out int restingBP)) throw new Exception("Некорректное давление");
-                if (!int.TryParse(CholesterolTextBox.Text, out int cholesterol)) throw new Exception("Некорректный холестерин");
-                if (!int.TryParse(MaxHRTextBox.Text, out int maxHR)) throw new Exception("Некорректный пульс");
-                if (!float.TryParse(OldpeakTextBox.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float oldpeak)) throw new Exception("Некорректный Oldpeak");
+                var errors = new System.Collections.Generic.List<string>();
+                if (!int.TryParse(AgeTextBox.Text, out int age)) errors.Add("Возраст: введите целое число");
+                if (!int.TryParse(RestingBPTextBox.Text, out int restingBP)) errors.Add("RestingBP: введите целое число");
+                if (!int.TryParse(CholesterolTextBox.Text, out int cholesterol)) errors.Add("Cholesterol: введите целое число");
+                if (!int.TryParse(MaxHRTextBox.Text, out int maxHR)) errors.Add("MaxHR: введите целое число");
+                if (!float.TryParse(OldpeakTextBox.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out float oldpeak)) errors.Add("Oldpeak: используйте точку как разделитель");
+
+                if (errors.Count == 0)
+                {
+                    if (age < 18 || age > 100) errors.Add("Возраст должен быть в диапазоне 18–100");
+                    if (restingBP < 60 || restingBP > 200) errors.Add("RestingBP должен быть в диапазоне 60–200");
+                    if (cholesterol < 100 || cholesterol > 600) errors.Add("Cholesterol должен быть в диапазоне 100–600");
+                    if (maxHR < 60 || maxHR > 220) errors.Add("MaxHR должен быть в диапазоне 60–220");
+                    if (oldpeak < 0.0f || oldpeak > 10.0f) errors.Add("Oldpeak должен быть в диапазоне 0.0–10.0");
+                }
+
+                var sex = (SexComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                var cpt = (ChestPainTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                var ecg = (RestingECGComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                var ang = (ExerciseAnginaComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                var slope = (STSlopeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                if (string.IsNullOrEmpty(sex)) errors.Add("Пол обязателен");
+                if (string.IsNullOrEmpty(cpt)) errors.Add("Тип боли в груди обязателен");
+                if (string.IsNullOrEmpty(ecg)) errors.Add("RestingECG обязателен");
+                if (string.IsNullOrEmpty(ang)) errors.Add("ExerciseAngina обязателен");
+                if (string.IsNullOrEmpty(slope)) errors.Add("ST_Slope обязателен");
+
+                if (errors.Count > 0)
+                {
+                    MessageBox.Show(string.Join("\n", errors), "Ошибка валидации", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
                 Record.Age = age;
-                Record.Sex = (SexComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                Record.ChestPainType = (ChestPainTypeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                Record.Sex = sex;
+                Record.ChestPainType = cpt;
                 Record.RestingBP = restingBP;
                 Record.Cholesterol = cholesterol;
                 Record.FastingBS = FastingBSComboBox.SelectedIndex;
-                Record.RestingECG = (RestingECGComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                Record.RestingECG = ecg;
                 Record.MaxHR = maxHR;
-                Record.ExerciseAngina = (ExerciseAnginaComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                Record.ExerciseAngina = ang;
                 Record.Oldpeak = oldpeak;
-                Record.ST_Slope = (STSlopeComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
+                Record.ST_Slope = slope;
                 Record.HeartDisease = HeartDiseaseComboBox.SelectedIndex;
 
                 DialogResult = true;
